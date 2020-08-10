@@ -15,7 +15,8 @@ class AdministradorServicio {
             email: usuario.email,
             password: usuario.password,
             password_confirmation: usuario.password_confirmation,
-            rol_id: usuario.rol_id
+            rol_id: usuario.rol_id,
+            estado: usuario.estado,
         }, { headers: authHeader() });
     }
     editarUsuario(usuario) {
@@ -24,7 +25,8 @@ class AdministradorServicio {
             apellidos: usuario.apellidos,
             password: usuario.password,
             password_confirmation: usuario.password_confirmation,
-            rol_id: usuario.rol_id
+            rol_id: usuario.rol_id,
+            estado: usuario.estado,
         }, { headers: authHeader() });
     }
     // ADMINISTRAR ROLES
@@ -47,7 +49,25 @@ class AdministradorServicio {
         }, { headers: authHeader() });
 
     }
-
+    // GET PERMISOS X ROL
+    getPermisosxRol(id) {
+        return axios.get(API_URL + 'apiRecursos/' + id.id, { headers: authHeader() });
+    }
+    // ADMINISTRAR MODULOS
+    getModulos() {
+        return axios.get(API_URL + 'apiModulos', { headers: authHeader() });
+    }
+    agregarModulos(modulo) {
+        return axios.post(API_URL + 'apiModulos', {
+            nombreModulo: modulo.nombreModulo,
+            ruta: modulo.ruta,
+            operaciones: modulo.operaciones
+        }, { headers: authHeader() });
+    }
+    // ADMINISTRAR PERMISOS Y OPERACIONES
+    getPermisosYOperaciones(data) {
+        return axios.get(API_URL + 'apiPermisosYOperaciones/' + data.rol_id + '_' + data.modulo_id, { headers: authHeader() });
+    }
 }
 
 export default new AdministradorServicio();

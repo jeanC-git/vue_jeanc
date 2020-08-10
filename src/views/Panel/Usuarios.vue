@@ -39,6 +39,10 @@
           </v-tooltip>
         </template>
         <template v-slot:item.nombre_completo="{ item }">{{ item.nombres }}, {{ item.apellidos }}</template>
+        <template v-slot:item.estado="{ item }">
+          <v-chip v-if="item.estado == 1" color="green" text-color="white">Activo</v-chip>
+          <v-chip v-if="item.estado == 2" color="red" text-color="white">Inactivo</v-chip>
+        </template>
       </v-data-table>
     </v-col>
     <!-- ============== DIALOG CRUD ROL EDITAR/AGREGAR/ELIMINAR ============== -->
@@ -89,13 +93,22 @@
           </v-row>
 
           <v-row>
-            <v-col cols="12" sm="12" md="12" lg="12">
+            <v-col cols="12" sm="6" md="6" lg="6">
               <v-select
                 label="Roles"
                 :items="roles"
                 item-text="nombreRol"
                 item-value="id"
                 v-model="CRUDuser.rol_id"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="6" md="6" lg="6">
+              <v-select
+                label="Estado"
+                :items="[{id: 1, estado:'Activo'}, {id:2, estado:'Inactivo'}]"
+                item-text="estado"
+                item-value="id"
+                v-model="CRUDuser.estado"
               ></v-select>
             </v-col>
           </v-row>
@@ -132,16 +145,17 @@ export default {
           text: "Nombres y Apellidos",
           align: "start",
           sortable: true,
-          value: "nombre_completo",
+          value: "nombre_completo"
         },
         { text: "Email", value: "email", sortable: true, align: "start" },
         { text: "Rol", value: "nombreRol", sortable: true, align: "start" },
+        { text: "Estado", value: "estado", sortable: true, align: "center" },
         {
           text: "Acciones",
           value: "acciones",
           sortable: false,
-          align: "center",
-        },
+          align: "center"
+        }
       ],
       usuarios: [],
       roles: [],
@@ -154,12 +168,13 @@ export default {
         apellidos: "",
         email: "",
         rol_id: "",
+        estado: "",
         password: "",
         password_confirmation: "",
         boton: "",
         tipo: "",
-        msg: [],
-      },
+        msg: []
+      }
     };
   },
   created() {
@@ -180,10 +195,11 @@ export default {
             apellidos: "",
             email: "",
             rol_id: "",
+            estado: "",
             password: "",
             password_confirmation: "",
             boton: "AGREGAR",
-            tipo: "agregar",
+            tipo: "agregar"
           };
 
           break;
@@ -195,11 +211,12 @@ export default {
             apellidos: usuario.apellidos,
             email: usuario.email,
             rol_id: usuario.rol_id,
+            estado: usuario.estado,
             password: usuario.password,
             password_confirmation: usuario.password_confirmation,
             boton: "GUARDAR",
             tipo: "editar",
-            msg: [],
+            msg: []
           };
           break;
         case "eliminar":
@@ -211,9 +228,10 @@ export default {
             email: "",
             rol_id: "",
             password: "",
+            estado: "",
             password_confirmation: "",
             boton: "ELIMINAR",
-            tipo: "eliminar",
+            tipo: "eliminar"
           };
           break;
       }
@@ -223,18 +241,18 @@ export default {
       switch (tipo) {
         case "listar":
           vue.$store.dispatch("administrador/getUsuarios").then(
-            (response) => {
+            response => {
               vue.usuarios = response.data;
             },
-            (error) => {
+            error => {
               if (error && error.response.data.msg && error.response.data.cod) {
                 vue.swal(
                   `Mensaje de sistema: ${error.response.data.msg}`,
                   "warning",
                   2500,
                   "top",
-                  "animate__animated animate__fadeInDown",
-                  "animate__animated animate__fadeOut"
+                  "fadeInDown",
+                  "fadeOut"
                 );
                 switch (error.response.data.cod) {
                   case "100-00002":
@@ -256,13 +274,14 @@ export default {
               password: vue.CRUDuser.password,
               password_confirmation: vue.CRUDuser.password_confirmation,
               rol_id: vue.CRUDuser.rol_id,
+              estado: vue.CRUDuser.estado
             })
             .then(
-              (response) => {
+              response => {
                 vue.doCRUDuser("listar", "");
                 vue.dialog_CRUDuser = false;
               },
-              (error) => {
+              error => {
                 vue.CRUDuser.msg = error.response.data;
               }
             );
@@ -277,13 +296,14 @@ export default {
               password: vue.CRUDuser.password,
               password_confirmation: vue.CRUDuser.password_confirmation,
               rol_id: vue.CRUDuser.rol_id,
+              estado: vue.CRUDuser.estado
             })
             .then(
-              (response) => {
+              response => {
                 vue.doCRUDuser("listar", "");
                 vue.dialog_CRUDuser = false;
               },
-              (error) => {
+              error => {
                 vue.CRUDuser.msg = error.response.data;
               }
             );
@@ -291,63 +311,37 @@ export default {
         case "eliminar":
           vue.$store
             .dispatch("administrador/eliminarRol", {
-              id: vue.CRUDuser.id,
+              id: vue.CRUDuser.id
             })
             .then(
-              (response) => {
+              response => {
                 vue.doCRUDuser("listar", "");
                 vue.dialog_CRUDuser = false;
               },
-              (error) => {
+              error => {
                 vue.CRUDuser.msg = error.response.data;
               }
             );
           break;
       }
     },
-    swal(title, type, timer, position, showClass, hideClass) {
-      let vue = this;
-      const Toast = vue.$swal.mixin({
-        toast: true,
-        position: position,
-        showConfirmButton: false,
-        timer: timer,
-        timerProgressBar: true,
-        showClass: {
-          popup: showClass,
-        },
-        hideClass: {
-          popup: hideClass,
-        },
-        onOpen: (toast) => {
-          toast.addEventListener("mouseenter", vue.$swal.stopTimer);
-          toast.addEventListener("mouseleave", vue.$swal.resumeTimer);
-        },
-      });
-      Toast.fire({
-        icon: type,
-        title:
-          "<p class='font-sacramento' style='font-family: Arial, sans-serif'>" +
-          title +
-          "</p>",
-      });
-    },
+
     getRoles() {
       let vue = this;
 
       vue.$store.dispatch("administrador/getRoles").then(
-        (response) => {
+        response => {
           vue.roles = response.data;
         },
-        (error) => {
+        error => {
           if (error && error.response.data.msg && error.response.data.cod) {
             vue.swal(
               `Mensaje de sistema: ${error.response.data.msg}`,
               "warning",
               2500,
               "top",
-              "animate__animated animate__fadeInDown",
-              "animate__animated animate__fadeOut"
+              "fadeInDown",
+              "fadeOut"
             );
             switch (error.response.data.cod) {
               case "100-00002":
@@ -363,7 +357,7 @@ export default {
     logout() {
       this.$store.dispatch("auth/logout");
       this.$router.push("/inicio");
-    },
-  },
+    }
+  }
 };
 </script>

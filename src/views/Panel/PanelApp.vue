@@ -6,6 +6,9 @@
       <li>{{usuarioLogeado.user.token}}</li>
     </ul>
     {{redirectIfNotAllowed}}
+    <br />
+    <hr />
+    {{prueba}}
   </v-row>
 </template>
 
@@ -37,41 +40,16 @@ export default {
         }, 3000);
       }
     },
+    prueba() {
+      return this.$store.state.prueba;
+    }
   },
   mounted() {
     if (!this.usuarioLogeado) {
       this.$router.push("/");
     }
   },
-  methods: {
-    swal(title, type, timer, position, showClass, hideClass) {
-      let vue = this;
-      const Toast = vue.$swal.mixin({
-        toast: true,
-        position: position,
-        showConfirmButton: false,
-        timer: timer,
-        timerProgressBar: true,
-        showClass: {
-          popup: showClass,
-        },
-        hideClass: {
-          popup: hideClass,
-        },
-        onOpen: (toast) => {
-          toast.addEventListener("mouseenter", vue.$swal.stopTimer);
-          toast.addEventListener("mouseleave", vue.$swal.resumeTimer);
-        },
-      });
-      Toast.fire({
-        icon: type,
-        title:
-          "<p class='font-sacramento' style='font-family: Arial, sans-serif'>" +
-          title +
-          "</p>",
-      });
-    },
-  },
+  methods: {},
   created() {
     let vue = this;
     let authRequired = Object.keys(vue.$route.query).length;
@@ -90,7 +68,7 @@ export default {
         }
       }, 3000);
     }
-  },
+  }
 };
 </script>
 

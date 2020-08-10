@@ -107,21 +107,20 @@ export default {
           text: "ID",
           align: "start",
           sortable: false,
-          value: "id",
+          value: "id"
         },
         {
           text: "Rol",
           align: "start",
           sortable: false,
-          value: "nombreRol",
+          value: "nombreRol"
         },
-        { text: "Permisos", value: "permisos", align: "center" },
         {
           text: "Acciones",
           value: "acciones",
           sortable: false,
-          align: "center",
-        },
+          align: "center"
+        }
       ],
       roles: [],
       dialog_CRUDrol: false,
@@ -131,8 +130,8 @@ export default {
         nombreRol: "",
         boton: "",
         tipo: "",
-        msg: [],
-      },
+        msg: []
+      }
     };
   },
   created() {
@@ -149,7 +148,7 @@ export default {
             msg: [],
             titulo: "AGREGAR ROL",
             boton: "AGREGAR",
-            tipo: "agregar",
+            tipo: "agregar"
           };
 
           break;
@@ -160,7 +159,7 @@ export default {
             nombreRol: rol.nombreRol,
             boton: "GUARDAR",
             tipo: "editar",
-            msg: [],
+            msg: []
           };
           break;
         case "eliminar":
@@ -170,7 +169,7 @@ export default {
             nombreRol: rol.nombreRol,
             boton: "ELIMINAR",
             tipo: "eliminar",
-            msg: [],
+            msg: []
           };
           break;
       }
@@ -180,18 +179,18 @@ export default {
       switch (tipo) {
         case "listar":
           vue.$store.dispatch("administrador/getRoles").then(
-            (response) => {
+            response => {
               vue.roles = response.data;
             },
-            (error) => {
+            error => {
               if (error && error.response.data.msg && error.response.data.cod) {
                 vue.swal(
                   `Mensaje de sistema: ${error.response.data.msg}`,
                   "warning",
                   2500,
                   "top",
-                  "animate__animated animate__fadeInDown",
-                  "animate__animated animate__fadeOut"
+                  "fadeInDown",
+                  "fadeOut"
                 );
                 switch (error.response.data.cod) {
                   case "100-00002":
@@ -207,14 +206,14 @@ export default {
         case "agregar":
           vue.$store
             .dispatch("administrador/agregarRol", {
-              nombreRol: vue.CRUDrol.nombreRol,
+              nombreRol: vue.CRUDrol.nombreRol
             })
             .then(
-              (response) => {
+              response => {
                 vue.doCRUDrol("listar", "");
                 vue.dialog_CRUDrol = false;
               },
-              (error) => {
+              error => {
                 vue.CRUDrol.msg = error.response.data;
               }
             );
@@ -224,14 +223,14 @@ export default {
           vue.$store
             .dispatch("administrador/editarRol", {
               id: vue.CRUDrol.id,
-              nombreRol: vue.CRUDrol.nombreRol,
+              nombreRol: vue.CRUDrol.nombreRol
             })
             .then(
-              (response) => {
+              response => {
                 vue.doCRUDrol("listar", "");
                 vue.dialog_CRUDrol = false;
               },
-              (error) => {
+              error => {
                 vue.CRUDrol.msg = error.response.data;
               }
             );
@@ -239,51 +238,24 @@ export default {
         case "eliminar":
           vue.$store
             .dispatch("administrador/eliminarRol", {
-              id: vue.CRUDrol.id,
+              id: vue.CRUDrol.id
             })
             .then(
-              (response) => {
+              response => {
                 vue.doCRUDrol("listar", "");
                 vue.dialog_CRUDrol = false;
               },
-              (error) => {
+              error => {
                 vue.CRUDrol.msg = error.response.data;
               }
             );
           break;
       }
     },
-    swal(title, type, timer, position, showClass, hideClass) {
-      let vue = this;
-      const Toast = vue.$swal.mixin({
-        toast: true,
-        position: position,
-        showConfirmButton: false,
-        timer: timer,
-        timerProgressBar: true,
-        showClass: {
-          popup: showClass,
-        },
-        hideClass: {
-          popup: hideClass,
-        },
-        onOpen: (toast) => {
-          toast.addEventListener("mouseenter", vue.$swal.stopTimer);
-          toast.addEventListener("mouseleave", vue.$swal.resumeTimer);
-        },
-      });
-      Toast.fire({
-        icon: type,
-        title:
-          "<p class='font-sacramento' style='font-family: Arial, sans-serif'>" +
-          title +
-          "</p>",
-      });
-    },
     logout() {
       this.$store.dispatch("auth/logout");
       this.$router.push("/inicio");
-    },
-  },
+    }
+  }
 };
 </script>

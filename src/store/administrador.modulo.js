@@ -87,6 +87,40 @@ export const administrador = {
                 }
             );
         },
+        // ADMINISTRAR MODULOS
+        getModulos({ commit }, data) {
+            return AdministradorServicio.getModulos(data).then(
+                response => {
+                    return Promise.resolve(response);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            );
+        },
+        agregarModulos({ commit }, recurso) {
+            return AdministradorServicio.agregarModulos(recurso).then(
+                response => {
+                    return Promise.resolve(response);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            );
+        },
+        // ADMINISTRAR OPERACIONES
+        getPermisosYOperaciones({ commit }, data) {
+            return AdministradorServicio.getPermisosYOperaciones(data).then(
+                response => {
+                    return Promise.resolve(response);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            );
+        },
+
+
 
     },
     mutations: {

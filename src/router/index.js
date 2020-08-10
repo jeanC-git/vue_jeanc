@@ -34,6 +34,16 @@ const routes = [
     path: '/asignarpermisos',
     name: 'AsignarPermisos',
     component: () => import(/* webpackChunkName: "about" */ '../views/Panel/AsignarPermisos.vue')
+  },
+  {
+    path: '/modulos',
+    name: 'Modulos',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Panel/Modulos.vue')
+  },
+  {
+    path: '/test',
+    name: 'Test',
+    component: () => import(/* webpackChunkName: "about" */ '../views/TestComponents/MultiSelectDualBox.vue')
   }
 ]
 
@@ -44,9 +54,9 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/', '/inicio'];
-  const authRequired = !publicPages.includes(to.path);
-  const loggedIn = localStorage.getItem('user');
+  const paginasPublicas = ['/', '/inicio', '/test'];
+  const authRequired = !paginasPublicas.includes(to.path);
+  const usuarioLogeado = localStorage.getItem('user');
 
   // PAGINA NO REQUIERE AUTENTICACION, NO IMPORTA SI ESTA LOGEADO 
   // CONTINUA A LA PAGINA SGTE
@@ -54,24 +64,22 @@ router.beforeEach((to, from, next) => {
     next();
     // TRATANDO DE ACCEDER A UNA PAGINA PRIVADA Y NO ESTA LOGEADO
     // REDIRECCIONA A PAGINA PRINCIPAL
-  } else if (authRequired && !loggedIn) {
+  } else if (authRequired && !usuarioLogeado) {
     next('/inicio');
     // TRATANDO DE ACCEDER A UNA PAGINA PRIVADA Y SI ESTA LOGEADO
     // REDIRECCIONA AL PANEL DE USUARIO
-  } else if (authRequired && loggedIn) {
+  } else if (authRequired && usuarioLogeado) {
+    // return next();
     if (to.path == '/panel') {
-      return next();
+      next();
     }
-    let permisos = JSON.parse(JSON.parse(loggedIn).user.permisos);
-    permisos.forEach(p => {
-      if (p.routeRecurso == to.path) {
-        if (p.ver) {
-          return next();
-        } else {
-          return next('/panel?authRequired=true');
-        }
-      }
-    });
+    let permisos = JSON.parse(usuarioLogeado).user.p;
+    let modulo = permisos.find((p) => p.ruta == to.path && p.nombreOperacion == 'ver');
+    if (modulo) {
+      next();
+    } else {
+      next('/panel?authRequired=true');
+    }
   }
 });
 export default router

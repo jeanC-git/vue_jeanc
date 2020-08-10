@@ -7,8 +7,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    prueba: ""
   },
   mutations: {
+    imprimir(state, valor) {
+      state.prueba = valor;
+    }
   },
   actions: {
   },

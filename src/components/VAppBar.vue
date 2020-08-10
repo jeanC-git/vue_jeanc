@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app>
-      <v-list shaped dense>
+      <v-list shaped dense v-if="items!==null">
         <v-list-item-group>
-          <v-list-item v-for="(item, i) in routesHaveAccess" :key="i" :to="item.routeRecurso">
+          <v-list-item v-for="(item, i) in routesHaveAccess" :key="i" :to="item.ruta">
             <v-list-item-icon>
-              <v-icon v-text="item.icon ? item.icon: 'mdi-clipboard-list'"></v-icon>
+              <v-icon v-text="item.icon ? item.icon :'mdi-clipboard-list' "></v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title v-text="item.recurso"></v-list-item-title>
+              <v-list-item-title v-text="item.nombreModulo"></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   data: function() {
     return {
@@ -62,7 +63,7 @@ export default {
     },
     routesHaveAccess() {
       let vue = this;
-      let permisos = vue.items.filter(i => i.ver == true);
+      let permisos = vue.items.filter(i => i.nombreOperacion == "ver");
       return permisos;
     }
   },
@@ -73,9 +74,7 @@ export default {
     },
     getPermisos() {
       let vue = this;
-      let permisos = JSON.parse(
-        JSON.parse(localStorage.getItem("user")).user.permisos
-      );
+      let permisos = JSON.parse(localStorage.getItem("user")).user.p;
       vue.items = permisos;
     }
   },
